@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Log in to ABA Data Keeper</h1>
+<p>If you don't have an account, you may <a href="/signup">Signup</a></p>
+<form action="/login" method="post">
+    <table>
+        <tr>
+            <td><label for="username">Username</label></td>
+            <td>
+                <input name="username" type="text" value="{{ username }}">
+                <span>{{username_error}}</span>
+            </td>
+            
+        </tr>
+        <tr>
+            <td><label for="password">Password</label></td>
+            <td>
+                <input name="password" type="password">
+                <span>{{password_error}}</span>
+            </td>
+            
+        </tr>
+    </table>
+    <input type="submit" value="Login">
+</form>
+{% endblock %}
