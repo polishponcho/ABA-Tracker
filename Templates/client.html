@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+    
+    <h1>{{title}}</h1>
+    
+    <form method='post'>
+       
+    </form>
+
+    <hr />
+
+    {% if clients|length == 0 %}
+
+    <p>No clients yet</p>
+    {% else %}
+
+
+        {% for client in clients %}
+            <h2>
+                <form>
+                <a href='./client?id={{blog.id}}'>{{client.name}}</a>
+                <input type="hidden" name="client-id" value="{{client.id}}" />
+                </form>
+            </h2>
+                
+            <p>{{client.body}}</p>
+
+            
+            <p><em>written by </em> <a href='./client?user={{client.owner.username}}'>{{client.owner.username}}</a></p>
+            
+        {% endfor %}
+
+    {% endif %}
+
+    <hr />
+
+{% endblock %}

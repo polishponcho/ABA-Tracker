@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>{{title}}</h1>
+    
+    <form method='post'>
+   
+    </form>
+
+    {% if clients|length == 0 %}
+        <p>No clients yet</p>
+    {% else %}
+
+
+        {% for user in users %}
+            <h2>
+                <form>
+                <a href='./client?user={{user.username}}'>{{user.username}}</a>
+                <input type="hidden" name="user-id" value="{{user.id}}" />
+                </form>
+            </h2>
+        
+        {% endfor %}
+
+    {% endif %}
+
+{% endblock %}

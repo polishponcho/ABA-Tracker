@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+    
+    <h1>Add a New Client</h1>
+    
+        <style>
+            .error {color: red;}
+        </style>
+    
+    
+    <form method='post' id="formid">
+        <label>
+            Client's Name:<br>
+            <input type="text" name='client' /><br>
+            <p class="error">{{client_error}}</p>
+        </label>
+       
+        <input type="submit" name='submit' value='Add Client' />
+    </form>
+    
+
+    <hr />
+
+
+
+{% endblock %}
