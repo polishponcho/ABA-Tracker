@@ -2,19 +2,15 @@
 
     {% block content %}
     
-        <h1>
+    <div>
 
-            {{client.name}}
-            
-        </h1>
-    <!--
-        <a href='./client?id={{client.id}}'>{{client.name}}</a>
-        -->
-        <div>
-            <a href='/new-behavior?id={{client.id}}'><h2>New Behavior</h2></a>
-        </div>
-    
-        <!--
+    </div>
+    <hr>
+
+    <style>
+        .error {color: red;}
+    </style>
+
         <form method='post' id="formid">
                 <label>
                     Add Behavior:<br>
@@ -23,10 +19,10 @@
                 </label>
                
                 <input type="submit" name='submit' value='Add Behavior' />
-            </form>
--->
-        <h3>
-            {{behavior.description}}
-        </h3>
+        </form>
 
+        <h3>
+            
+        </h3>
+        
     {% endblock %}

@@ -3,21 +3,22 @@
 {% block content %}
 
     <h1>{{title}}</h1>
-    
-    <form method='post'>
-   
-    </form>
+
+    <div>
+            <a href='/new-client'><h2>New Client</h2></a>
+    </div>
+
 
     {% if clients|length == 0 %}
         <p>No clients yet</p>
     {% else %}
 
 
-        {% for user in users %}
+        {% for client in clients %}
             <h2>
                 <form>
-                <a href='./client?user={{user.username}}'>{{user.username}}</a>
-                <input type="hidden" name="user-id" value="{{user.id}}" />
+                <a href='./client?id={{client.id}}'>{{client.name}}</a>
+                <input type="hidden" name="client-id" value="{{client.id}}" />
                 </form>
             </h2>
         

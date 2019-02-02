@@ -8,15 +8,43 @@ app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 app.secret_key = 'supersecret'
 
+class Behavior(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(120))
+    occurrences = db.Column(db.Integer)
+    child_id = db.Column(db.Integer, db.ForeignKey('client.id'))
+    '''
+    sessions = db.relationship('Session', backref='day')
+'''
+    def __init__(self, description, occurrences, child):
+        self.description = description
+        self.occurrences = occurrences
+        self.child = child
+
+'''
+class Session(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    number = db.Column(db.Integer)
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    child_id = db.Column(db.Integer, db.ForeignKey('client.id'))
+    day_id = db.Column(db.Integer, db.ForeignKey('behavior.id'))
+
+    def __init__(self, number, owner, child, day):
+        self.number = number
+        self.owner = owner
+        self.child = child
+        self.day = day 
+'''
 class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120))
-    behavior = db.Column(db.String(120))
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-    def __init__(self, name, behavior, owner):
+    behaviors = db.relationship('Behavior', backref='child')
+    '''
+    sessions = db.relationship('Session', backref='child')
+'''
+    def __init__(self, name, owner):
         self.name = name
-        self.behavior = behavior
         self.owner = owner
 
 class User(db.Model): 
@@ -24,14 +52,16 @@ class User(db.Model):
     username = db.Column(db.String(120), unique=True)
     password = db.Column(db.String(120))
     clients = db.relationship('Client', backref='owner')
-    
+    '''
+    sessions = db.relationship('Session', backref='owner')
+    '''
     def __init__(self, username, password):
         self.username = username
         self.password = password
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup', 'index', 'home']
+    allowed_routes = ['login', 'signup', 'index']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -117,7 +147,9 @@ def signup():
 
 @app.route('/home')
 def home():
-    clients = Client.query.all()
+
+    clients = Client.query.filter_by(owner_id=1).all()
+    
     return render_template('/index.html', title = 'ABA Data Tracker', clients=clients)
 
 @app.route('/logout')
@@ -131,15 +163,16 @@ def new_client():
     client_error = ''
 
     if request.method == 'POST':
-        client_name = request.form['client']
-        client_behavior = ''
+        client_name = request.form['client'] 
         
         if len(client_name) == 0 :
             client_error = 'Please enter name'  
 
         if not client_error:
+        
             owner = User.query.filter_by(username=session['username']).first()
-            new_client = Client(client_name, client_behavior, owner)
+            
+            new_client = Client(client_name, owner)
             db.session.add(new_client)
             db.session.commit()
             
@@ -151,23 +184,53 @@ def new_client():
     
     return render_template('/newclient.html')
 
-app.route('/client', methods=['POST', 'GET'])
+@app.route('/new-behavior', methods=['POST', 'GET'])
+def new_behavior():
+
+    behavior_error = ''
+    occurrences = 0
+    is_id = request.args.get('id')
+    child = Client.query.filter_by(id=is_id).first()
+
+    if request.method == 'POST':
+        behavior_name = request.form['behavior']
+        
+        if len(behavior_name) == 0 :
+            behavior_error = 'Please enter behavior'  
+
+        if not behavior_error:   
+            new_behavior = Behavior(behavior_name, occurrences, child)
+            db.session.add(new_behavior)
+            db.session.commit()
+
+            return redirect('/client?id=' + str(is_id))
+
+        return render_template('/newbehavior.html',title="ABA Data Tracker", behavior_error=behavior_error, owner=owner)
+    else:
+        return render_template('/newbehavior.html')
+
+@app.route('/client', methods=['POST', 'GET'])
 def index():
 
     is_user = request.args.get('user')
     is_id = request.args.get('id')
     owner = User.query.filter_by(username=is_user).first()
     
+    #child = Client.query.filter_by(id=is_id).first()
+
     if is_user:
+        
         user = Client.query.get(is_user)
         clients = Client.query.filter_by(owner=owner).all()
         users = Client.query.filter_by(owner=owner).all()
-        return render_template('/singleuser.html', title="ABA Data Tracker", is_user=is_user, user=user, clients=clients, users=users )
+        return render_template('/singleuser.html', user=user, users=users, clients=clients)
     
+
     if is_id:
         client = Client.query.get(is_id)
+        behavior = Behavior.query.filter_by(id=is_id).all()
         users = Client.query.filter_by(owner=owner).all()
-        return render_template('/clientpage.html', users=users, client=client)
+        return render_template('/clientpage.html', users=users, client=client, behavior=behavior)
 
     else:
         clients = Client.query.all()

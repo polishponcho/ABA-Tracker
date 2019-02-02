@@ -19,7 +19,7 @@
         {% for client in clients %}
             <h2>
                 <form>
-                <a href='./client?id={{blog.id}}'>{{client.name}}</a>
+                <a href='./client?id={{client.id}}'>{{client.name}}</a>
                 <input type="hidden" name="client-id" value="{{client.id}}" />
                 </form>
             </h2>
