@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>{{title}}</h1>
+    <hr>
+
+    <div>
+            <a href='/new-client'><h2>New Client</h2></a>
+    </div>
+
+    <hr>
+
+    
+    {% if clients|length == 0 %}
+
+        <p>No clients yet</p>
+
+    {% else %}
+
+        {% for client in clients %}
+            <h2>
+                <form>
+                <a href='./client?id={{client.id}}'>{{client.name}}</a>
+                <input type="hidden" name="client-id" value="{{client.id}}" />
+                </form>
+            </h2>
+        
+        {% endfor %}
+
+    {% endif %}
+
+{% endblock %}

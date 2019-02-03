@@ -4,26 +4,23 @@
 
     <h1>{{title}}</h1>
 
+    <hr>
+
+    <h2>ABA Data Tracker is a data tracking app developed for ABA implementers.</h2>  
+        <h2>ABA is short for “applied behavioral analysis” and implementers actively 
+        record data concerning their client’s behaviors like occurrences of 
+        elopement throughout a school day. </h2>
+        <h2>ABA Data Tracker would allow implementers to login and easily record these data points.
+        This app could ideally alleviate the impracticality of implementing ABA while taking data; 
+        while also helping people related to the clients have a better understanding on the trends in the data, 
+        based on graphs derived from the data stored within the app's database.</h2>
+
+    <hr>
+
     <div>
-            <a href='/new-client'><h2>New Client</h2></a>
+        <a href='/myclients?user={{user.username}}'><h2>My Clients</h2></a>
     </div>
 
-
-    {% if clients|length == 0 %}
-        <p>No clients yet</p>
-    {% else %}
-
-
-        {% for client in clients %}
-            <h2>
-                <form>
-                <a href='./client?id={{client.id}}'>{{client.name}}</a>
-                <input type="hidden" name="client-id" value="{{client.id}}" />
-                </form>
-            </h2>
-        
-        {% endfor %}
-
-    {% endif %}
+    <hr>
 
 {% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+    {% block content %}
+
+    <h1>Track Behaviors Here!</h1>
+
+    <hr>
+
+    <h2>{{behavior.description}}</h2>
+
+    <button type="button" value="occurrences" onclick="alert('Client Hit')">+</button>
+
+    <hr>
+
+    <h2>Number of times {{behavior.description}} has occurred:</h2>
+
+    <h2>{{behavior.occurrences}}</h2>
+
+    {% endblock %}

@@ -7,26 +7,30 @@
             {{client.name}}
             
         </h1>
-    <!--
-        <a href='./client?id={{client.id}}'>{{client.name}}</a>
-        -->
+
+        <hr>
+
         <div>
             <a href='/new-behavior?id={{client.id}}'><h2>New Behavior</h2></a>
         </div>
     
-        <!--
-        <form method='post' id="formid">
-                <label>
-                    Add Behavior:<br>
-                    <input type="text" name='behavior' /><br>
-                    <p class="error">{{behavior_error}}</p>
-                </label>
-               
-                <input type="submit" name='submit' value='Add Behavior' />
-            </form>
--->
-        <h3>
-            {{behavior.description}}
-        </h3>
+        <hr>    
+
+    {% if behaviors|length == 0 %}
+        <p>No behaviors yet</p>
+    {% else %}
+
+
+        {% for behavior in behaviors %}
+            <h2>
+                <form>
+                <a href='./behavior?id={{behavior.id}}'>{{behavior.description}}</a>
+                <input type="hidden" name="behavior-id" value="{{behavior.id}}" />
+                </form>
+            </h2>
+        
+        {% endfor %}
+
+    {% endif %}
 
     {% endblock %}

@@ -139,7 +139,7 @@ def signup():
             db.session.add(new_user)
             db.session.commit()
             session['username'] = username
-            return redirect('/new-client')
+            return redirect('/home')
         else:
             return render_template('signup.html', title = 'ABA Data Tracker', username_error=username_error, password_error=password_error, verify_error=verify_error)
             
@@ -147,19 +147,31 @@ def signup():
 
 @app.route('/home')
 def home():
-
-    clients = Client.query.filter_by(owner_id=1).all()
-    
-    return render_template('/index.html', title = 'ABA Data Tracker', clients=clients)
+    username = session['username']
+    user = User.query.filter_by(username=username).first()
+    return render_template('/index.html', title = 'ABA Data Tracker', user=user)
 
 @app.route('/logout')
 def logout():
     del session['username']
     return redirect('/home')
 
+@app.route('/myclients')
+def myclients():
+
+    is_user = request.args.get('user')
+    owner = User.query.filter_by(username=is_user).first()
+
+    if is_user:
+        user = Client.query.get(is_user)
+        clients = Client.query.filter_by(owner=owner).all()
+        return render_template('/myclients.html', title='My Clients', user=user, clients=clients)
+
+    return render_template('/myclients.html', title= 'My Clients')
+
 @app.route('/new-client', methods=['POST', 'GET'])
 def new_client():
-    
+
     client_error = ''
 
     if request.method == 'POST':
@@ -169,13 +181,13 @@ def new_client():
             client_error = 'Please enter name'  
 
         if not client_error:
-        
             owner = User.query.filter_by(username=session['username']).first()
-            
             new_client = Client(client_name, owner)
             db.session.add(new_client)
             db.session.commit()
-            
+            '''
+            /myclients?user={{user.username}}
+            '''
             return redirect('/client?id=' + str(new_client.id))
 
         return render_template('/newclient.html',title="ABA Data Tracker", client_error=client_error)
@@ -191,6 +203,7 @@ def new_behavior():
     occurrences = 0
     is_id = request.args.get('id')
     child = Client.query.filter_by(id=is_id).first()
+    behavior = Behavior.query.all()
 
     if request.method == 'POST':
         behavior_name = request.form['behavior']
@@ -199,43 +212,48 @@ def new_behavior():
             behavior_error = 'Please enter behavior'  
 
         if not behavior_error:   
+            behavior = Behavior.query.all()
             new_behavior = Behavior(behavior_name, occurrences, child)
             db.session.add(new_behavior)
             db.session.commit()
 
             return redirect('/client?id=' + str(is_id))
 
-        return render_template('/newbehavior.html',title="ABA Data Tracker", behavior_error=behavior_error, owner=owner)
+        return render_template('/newbehavior.html',title="Add a New Behavior", behavior_error=behavior_error, behavior=behavior)
     else:
         return render_template('/newbehavior.html')
+
+@app.route('/behavior', methods=['POST', 'GET'])
+def behavior():
+    
+    is_id = request.args.get('id')
+
+    if is_id:
+        """
+        def increment_behavior_occurrences():
+
+        """
+        behavior = Behavior.query.get(is_id)
+        return render_template('/behavior.html', behavior=behavior)
+    return render_template('/behavior.html')
 
 @app.route('/client', methods=['POST', 'GET'])
 def index():
 
-    is_user = request.args.get('user')
     is_id = request.args.get('id')
-    owner = User.query.filter_by(username=is_user).first()
-    
+    behaviors = Behavior.query.all()
+    child = Client.query.filter_by(id=is_id).first()
     #child = Client.query.filter_by(id=is_id).first()
-
-    if is_user:
-        
-        user = Client.query.get(is_user)
-        clients = Client.query.filter_by(owner=owner).all()
-        users = Client.query.filter_by(owner=owner).all()
-        return render_template('/singleuser.html', user=user, users=users, clients=clients)
     
-
     if is_id:
         client = Client.query.get(is_id)
-        behavior = Behavior.query.filter_by(id=is_id).all()
-        users = Client.query.filter_by(owner=owner).all()
-        return render_template('/clientpage.html', users=users, client=client, behavior=behavior)
+        behaviors = Behavior.query.filter_by(child=child).all()
+        #behaviors = Behavior.query.all()
+        return render_template('/clientpage.html', client=client, behaviors=behaviors)
 
     else:
         clients = Client.query.all()
-        user = Client.query.filter_by(owner=owner).all()
-        return render_template('/client.html',title="ABA Data Tracker", clients=clients,  user=user, owner=owner)
+        return render_template('/client.html',title="ABA Data Tracker", clients=clients)
         
 if __name__ == '__main__':
     app.run(threaded = True)
