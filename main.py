@@ -15,7 +15,7 @@ class Behavior(db.Model):
     child_id = db.Column(db.Integer, db.ForeignKey('client.id'))
     '''
     sessions = db.relationship('Session', backref='day')
-'''
+    '''
     def __init__(self, description, occurrences, child):
         self.description = description
         self.occurrences = occurrences
@@ -42,7 +42,7 @@ class Client(db.Model):
     behaviors = db.relationship('Behavior', backref='child')
     '''
     sessions = db.relationship('Session', backref='child')
-'''
+    '''
     def __init__(self, name, owner):
         self.name = name
         self.owner = owner
@@ -59,11 +59,15 @@ class User(db.Model):
         self.username = username
         self.password = password
 
+#0 Require Login 
+
 @app.before_request
 def require_login():
     allowed_routes = ['login', 'signup', 'index']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
+
+# 0 (login, signup, and logout routes)
 
 @app.route("/login", methods=['POST', 'GET'])
 def login():
@@ -89,8 +93,7 @@ def login():
             return render_template('login.html', username_error=username_error, password_error=password_error)
 
     return render_template('login.html')
-    
-    
+
 @app.route('/signup', methods=['POST', 'GET']) 
 def signup():
     if request.method == 'POST':
@@ -145,16 +148,20 @@ def signup():
             
     return render_template('signup.html', title = 'ABA Data Tracker')
 
+@app.route('/logout')
+def logout():
+    del session['username']
+    return redirect('/home')
+
+# 1 home (Nav Bar, Title, App Description, and Link to "My Clients")
+
 @app.route('/home')
 def home():
     username = session['username']
     user = User.query.filter_by(username=username).first()
     return render_template('/index.html', title = 'ABA Data Tracker', user=user)
 
-@app.route('/logout')
-def logout():
-    del session['username']
-    return redirect('/home')
+# 2 myclients (List of users clients)
 
 @app.route('/myclients')
 def myclients():
@@ -168,6 +175,8 @@ def myclients():
         return render_template('/myclients.html', title='My Clients', user=user, clients=clients)
 
     return render_template('/myclients.html', title= 'My Clients')
+
+# 3 new-client (nav bar, title, <input submit, value='Add Client'/>)
 
 @app.route('/new-client', methods=['POST', 'GET'])
 def new_client():
@@ -196,6 +205,59 @@ def new_client():
     
     return render_template('/newclient.html')
 
+# 4 
+
+@app.route('/behavior', methods=['POST', 'GET'])
+def behavior():
+    
+    is_id = request.args.get('id')
+    child = Client.query.filter_by(id=is_id).first()
+    
+    '''
+    behavior_occurrences = Behavior.query.get('occurrences')
+    '''
+
+    if request.method == 'POST':
+        behavior = Behavior.query.get(is_id)
+        def increment_behavior_occurrences():
+            behavior = Behavior.query.get(is_id)
+            behavior_occurrences = Behavior.query.get('occurrences')
+            occurrences = behavior_occurrences + 1
+            behavior_name = Behavior.query.get('name')
+            behavior = Behavior(behavior_name, occurrences, child)
+            db.session.update(behavior)
+            db.session.commit()
+            return render_template('/behavior.html', increment_behavior_occurrences=increment_behavior_occurrences, 
+            behavior=behavior, behavior_occurrences=behavior_occurrences)
+        return render_template('/behavior.html')
+    else:
+        behavior = Behavior.query.get(is_id)
+        return render_template('/behavior.html', title='Track Behaviors Here!', 
+            behavior=behavior)
+
+    '''
+    return redirect('/behavior?id=' + str(is_id))
+    '''
+@app.route('/increment-behavior', methods=['POST', 'GET'])
+def increment_behavior():
+
+    is_id = request.args.get('id')
+    behavior = Behavior.query.get(is_id)
+
+    '''
+    db.session.query(Behavior).update({Behavior.occurrences: Behavior.occurrences + 1})
+    db.session.commit()
+    '''
+    if is_id:
+        behavior = Behavior.query.get(is_id)
+        db.session.query(Behavior).filter(Behavior.id==is_id).update({Behavior.occurrences: Behavior.occurrences + 1})
+        db.session.commit()
+        return render_template('/incrementbehavior.html', behavior=behavior, title='Track Behaviors Here!')
+
+    else:
+        return render_template('/incrementbehavior.html', behavior=behavior)
+# 4 new-behavior ()
+
 @app.route('/new-behavior', methods=['POST', 'GET'])
 def new_behavior():
 
@@ -223,22 +285,9 @@ def new_behavior():
     else:
         return render_template('/newbehavior.html')
 
-@app.route('/behavior', methods=['POST', 'GET'])
-def behavior():
-    
-    is_id = request.args.get('id')
-
-    if is_id:
-        """
-        def increment_behavior_occurrences():
-
-        """
-        behavior = Behavior.query.get(is_id)
-        return render_template('/behavior.html', behavior=behavior)
-    return render_template('/behavior.html')
 
 @app.route('/client', methods=['POST', 'GET'])
-def index():
+def client():
 
     is_id = request.args.get('id')
     behaviors = Behavior.query.all()
