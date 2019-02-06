@@ -256,7 +256,7 @@ def increment_behavior():
 
     else:
         return render_template('/incrementbehavior.html', behavior=behavior)
-# 4 new-behavior ()
+# 5 new-behavior ()
 
 @app.route('/new-behavior', methods=['POST', 'GET'])
 def new_behavior():
@@ -292,12 +292,10 @@ def client():
     is_id = request.args.get('id')
     behaviors = Behavior.query.all()
     child = Client.query.filter_by(id=is_id).first()
-    #child = Client.query.filter_by(id=is_id).first()
     
     if is_id:
         client = Client.query.get(is_id)
         behaviors = Behavior.query.filter_by(child=child).all()
-        #behaviors = Behavior.query.all()
         return render_template('/clientpage.html', client=client, behaviors=behaviors)
 
     else:
