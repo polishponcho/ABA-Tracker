@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+    {% block content %}
+
+    <h1>Add New ABA Session Date</h1>
+
+    <div>
+
+    </div>
+    <hr>
+
+    <style>
+        .error {color: red;}
+    </style>
+
+        <form method='post' id="formid">
+                <label>
+                    Today's Date [mm/dd/yyyy]:<br>
+                    <input type="text" name='date' /><br>
+                    <p class="error">{{tracker_error}}</p>
+                </label>
+               
+                <input type="submit" name='submit' value='Add Date' />
+        </form>
+
+
+    {% endblock %}

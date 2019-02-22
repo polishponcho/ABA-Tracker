@@ -1,0 +1,53 @@
+{% from "macros.html" import nav_link with context %}
+<!DOCTYPE html>
+<html>
+  <head>
+    {% block head %}
+      <title>{% block title %}{% endblock %} Baseline</title>
+    {% endblock %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style type="text/css">
+      .container {
+        max-width: 700px;
+      }
+      h2 {color: #000080;}
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            {{ nav_link('home', 'Home') }}
+            {{ nav_link('login', 'Login') }}
+            {{ nav_link('logout', 'Logout') }}
+          </ul>
+ 
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+
+      <div class="footer">
+        {% block footer %}
+          Created by Ryan Ratajczyk
+          <br>
+          <br>
+          <br>
+        {% endblock %}
+      </div>
+    </div>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  </body>
+</html>

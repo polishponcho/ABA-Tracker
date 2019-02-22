@@ -1,5 +1,6 @@
 from flask import Flask, request, redirect, render_template, session
 from flask_sqlalchemy import SQLAlchemy 
+from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -8,58 +9,45 @@ app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 app.secret_key = 'supersecret'
 
-class Behavior(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.String(120))
-    occurrences = db.Column(db.Integer)
-    child_id = db.Column(db.Integer, db.ForeignKey('client.id'))
-    '''
-    sessions = db.relationship('Session', backref='day')
-    '''
-    def __init__(self, description, occurrences, child):
-        self.description = description
-        self.occurrences = occurrences
-        self.child = child
-
-'''
-class Session(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    number = db.Column(db.Integer)
-    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    child_id = db.Column(db.Integer, db.ForeignKey('client.id'))
-    day_id = db.Column(db.Integer, db.ForeignKey('behavior.id'))
-
-    def __init__(self, number, owner, child, day):
-        self.number = number
-        self.owner = owner
-        self.child = child
-        self.day = day 
-'''
-class Client(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120))
-    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    behaviors = db.relationship('Behavior', backref='child')
-    '''
-    sessions = db.relationship('Session', backref='child')
-    '''
-    def __init__(self, name, owner):
-        self.name = name
-        self.owner = owner
-
 class User(db.Model): 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True)
     password = db.Column(db.String(120))
     clients = db.relationship('Client', backref='owner')
-    '''
-    sessions = db.relationship('Session', backref='owner')
-    '''
     def __init__(self, username, password):
         self.username = username
         self.password = password
 
-#0 Require Login 
+class Client(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120))
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    behaviors = db.relationship('Behavior', backref='child')
+
+    def __init__(self, name, owner):
+        self.name = name
+        self.owner = owner
+
+class Behavior(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(120))
+    child_id = db.Column(db.Integer, db.ForeignKey('client.id'))
+    trackers = db.relationship('Tracker', backref='behavior')
+    
+    def __init__(self, description, child):
+        self.description = description
+        self.child = child
+
+class Tracker(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    datetime = db.Column(db.String(120))
+    occurrences = db.Column(db.Integer)
+    behavior_id = db.Column(db.Integer, db.ForeignKey('behavior.id'))
+    
+    def __init__(self, datetime, occurrences, behavior):
+        self.datetime = datetime
+        self.occurrences = occurrences
+        self.behavior = behavior
 
 @app.before_request
 def require_login():
@@ -159,7 +147,7 @@ def logout():
 def home():
     username = session['username']
     user = User.query.filter_by(username=username).first()
-    return render_template('/index.html', title = 'ABA Data Tracker', user=user)
+    return render_template('/index.html', title = 'Baseline', user=user)
 
 # 2 myclients (List of users clients)
 
@@ -211,29 +199,15 @@ def new_client():
 def behavior():
     
     is_id = request.args.get('id')
-    child = Client.query.filter_by(id=is_id).first()
+    behavior_id = Behavior.query.filter_by(id=is_id).first()
     
     '''
     behavior_occurrences = Behavior.query.get('occurrences')
     '''
 
-    if request.method == 'POST':
-        behavior = Behavior.query.get(is_id)
-        def increment_behavior_occurrences():
-            behavior = Behavior.query.get(is_id)
-            behavior_occurrences = Behavior.query.get('occurrences')
-            occurrences = behavior_occurrences + 1
-            behavior_name = Behavior.query.get('name')
-            behavior = Behavior(behavior_name, occurrences, child)
-            db.session.update(behavior)
-            db.session.commit()
-            return render_template('/behavior.html', increment_behavior_occurrences=increment_behavior_occurrences, 
-            behavior=behavior, behavior_occurrences=behavior_occurrences)
-        return render_template('/behavior.html')
-    else:
-        behavior = Behavior.query.get(is_id)
-        return render_template('/behavior.html', title='Track Behaviors Here!', 
-            behavior=behavior)
+    trackers = Tracker.query.filter_by(behavior=behavior_id).all()
+    behavior = Behavior.query.get(is_id)
+    return render_template('/behavior.html', behavior=behavior, trackers=trackers)
 
     '''
     return redirect('/behavior?id=' + str(is_id))
@@ -242,27 +216,27 @@ def behavior():
 def increment_behavior():
 
     is_id = request.args.get('id')
-    behavior = Behavior.query.get(is_id)
+    tracker = Tracker.query.get(is_id)
 
     '''
     db.session.query(Behavior).update({Behavior.occurrences: Behavior.occurrences + 1})
     db.session.commit()
     '''
     if is_id:
-        behavior = Behavior.query.get(is_id)
-        db.session.query(Behavior).filter(Behavior.id==is_id).update({Behavior.occurrences: Behavior.occurrences + 1})
+        tracker = Tracker.query.get(is_id)
+        db.session.query(Tracker).filter(Tracker.id==is_id).update({Tracker.occurrences: Tracker.occurrences + 1})
         db.session.commit()
-        return render_template('/incrementbehavior.html', behavior=behavior, title='Track Behaviors Here!')
+        return render_template('/trackerpage.html', tracker=tracker, title='Track Behaviors Here!')
 
     else:
-        return render_template('/incrementbehavior.html', behavior=behavior)
+        return render_template('/trackerpage.html', tracker=tracker)
 # 5 new-behavior ()
 
 @app.route('/new-behavior', methods=['POST', 'GET'])
 def new_behavior():
 
     behavior_error = ''
-    occurrences = 0
+   
     is_id = request.args.get('id')
     child = Client.query.filter_by(id=is_id).first()
     behavior = Behavior.query.all()
@@ -275,7 +249,7 @@ def new_behavior():
 
         if not behavior_error:   
             behavior = Behavior.query.all()
-            new_behavior = Behavior(behavior_name, occurrences, child)
+            new_behavior = Behavior(behavior_name, child)
             db.session.add(new_behavior)
             db.session.commit()
 
@@ -300,7 +274,48 @@ def client():
 
     else:
         clients = Client.query.all()
-        return render_template('/client.html',title="ABA Data Tracker", clients=clients)
+        return render_template('/client.html', title="ABA Data Tracker", clients=clients)
         
+@app.route('/tracker', methods=['POST', 'GET'])
+def tracker():
+
+    is_id = request.args.get('id')
+    trackers = Tracker.query.all()
+    
+    behavior = Behavior.query.filter_by(id=is_id).first()
+    
+    if is_id:
+        tracker = Tracker.query.get(is_id)
+        trackerz = Tracker.query.filter_by(behavior=behavior).all()
+        return render_template('/trackerpage.html', title='Track Behaviors Here!', tracker=tracker, behavior=behavior, trackerz=trackerz)
+
+    return render_template('/tracker.html', title='Tracker Behaviors Here!', trackers=trackers, behavior=behavior)
+
+@app.route('/new-aba-session', methods=['POST', 'GET'])
+def new_aba_session():
+
+    is_id = request.args.get('id')
+    tracker_error = ''
+    occurrences = 0
+    behavior = Behavior.query.filter_by(id=is_id).first()
+    behaviors = Behavior.query.all()
+
+    if request.method == 'POST':
+        tracker_datetime = request.form['date']
+
+        if len(tracker_datetime) == 0 :
+            tracker_error = 'Please enter date'
+
+        if not tracker_error: 
+            
+            new_tracker = Tracker(tracker_datetime, occurrences, behavior)
+            db.session.add(new_tracker)
+            db.session.commit()
+
+            return redirect('/tracker?id=' + str(new_tracker.id))
+        return render_template('/newabasession.html', tracker_error=tracker_error, behaviors=behaviors)
+    else:
+        return render_template('/newabasession.html')
+
 if __name__ == '__main__':
     app.run(threaded = True)

@@ -1,23 +1,29 @@
 <!doctype html>
 
 <html>
+    
+    {% block styles %}
+   
+
+    {% endblock %}
 
     <head>
         <title>{{title}}</title>
     </head>
 
         <body>
-            <div>
+            {% block navbar %}
+            <div class="navbar navbar-fixed-top">
                 <a href='/home'>Home</a>
-            </div> 
-            
-            <div>
+            </div>
+            <div class="navbar navbar-fixed-top">
                 <a href='/login'>Login</a>
-            </div>
-
-            <div>
+            </div>   
+            <div class="navbar navbar-fixed-top">
                 <a href='/logout'>Logout</a>
-            </div>
+            </div> 
+            {% endblock %}
+
 
         {% block content %}
         {% endblock %}

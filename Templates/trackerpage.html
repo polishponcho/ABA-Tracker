@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+    {% block content %}
+
+    <h1>{{tracker.datetime}}</h1>
+
+    <hr>
+
+    <h2>{{tracker.behavior.description}}</h2>
+    <form action="increment-behavior?id={{tracker.id}}" method="POST">
+    <button type="submit" value="occurrences" name="occurrences" onclick="">+</button>
+    </form>
+
+    <hr>
+
+    <h2>Number of times {{tracker.behavior.description}} has occurred:</h2>
+
+    <h2>{{tracker.occurrences}}</h2>
+
+    {% endblock %}

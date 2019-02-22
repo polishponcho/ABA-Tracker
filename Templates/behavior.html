@@ -2,9 +2,36 @@
 
     {% block content %}
 
-    <h1>{{title}}</h1>
+    <h1>{{behavior.description}}</h1>
 
     <hr>
+
+    <div>
+        <a href='/new-aba-session?id={{behavior.id}}'><h2>New ABA Session</h2></a>
+    </div>
+
+    <hr>
+
+    {% if trackers|length == 0 %}
+        <p>No ABA Sessions yet</p>
+    {% else %}
+
+
+        {% for tracker in trackers %}
+            <h2>
+                <form>
+                <a href='./tracker?id={{tracker.id}}'>{{tracker.datetime}}</a>
+                <input type="hidden" name="tracker-id" value="{{tracker.id}}" />
+                </form>
+            </h2>
+        
+        {% endfor %}
+
+    {% endif %}
+    <!--
+    <div>
+        <a href='/new-tracker?id={{behavior.id}}'><h2>New ABA Session</h2></a>
+    </div>
 
     <h2>{{behavior.description}}</h2>
     <form action="increment-behavior?id={{behavior.id}}" method="POST">
@@ -15,5 +42,5 @@
     <h2>Number of times {{behavior.description}} has occurred:</h2>
 
     <h2>{{behavior.occurrences}}</h2>
-
+    -->
     {% endblock %}
