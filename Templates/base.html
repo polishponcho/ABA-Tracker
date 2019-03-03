@@ -1,32 +1,55 @@
-<!doctype html>
-
-<html>
-    
-    {% block styles %}
-   
-    {% endblock %}
-
-    <head>
-        <title>{{title}}</title>
+<!DOCTYPE html>
+<html lang="en"><head>    
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-        <body>
-            {% block navbar %}
-            <div class="navbar navbar-fixed-top">
-                <a href='/home'>Home</a>
-            </div>
-            <div class="navbar navbar-fixed-top">
-                <a href='/login'>Login</a>
-            </div>   
-            <div class="navbar navbar-fixed-top">
-                <a href='/logout'>Logout</a>
-            </div> 
-            {% endblock %}
+    
+    
+    <body>
+        
+        {% block navbar %}
+        <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                  <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Baseline</a>
+                  </div>
+                  <ul class="nav navbar-nav">
+                    <li class="active"><a href="/home">Home</a></li>
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                    
+                  </ul>
+                </div>
+              </nav>
+              <!--
+            <nav class="navbar navbar-inverse navbar-fixed-top">
+                    <div class="container">
+                        <div class="navbar-header">
+                            <a class="navbar-brand" href='/home'>Home</a>
+                        </div>
 
+                        <div class="navbar navbar-fixed-top">
+                            <a class="navbar-brand" href='/login'>Login</a>
+                        </div>  
+
+                        <div class="navbar navbar-fixed-top">
+                            <a class="navbar-brand" href='/logout'>Logout</a>
+                        </div> 
+                        <div id="navbar" class="navbar-collapse collapse">
+                            </div>
+                    </div>
+            </nav>
+-->
+        {% endblock %}
+            
 
         {% block content %}
         {% endblock %}
 
-        </body>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    
+    </body>
 
 </html>

@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template, session
+from flask import Flask, Markup, request, redirect, render_template, session
 from flask_sqlalchemy import SQLAlchemy 
 from flask_bootstrap import Bootstrap
 
@@ -54,6 +54,11 @@ def require_login():
     allowed_routes = ['login', 'signup', 'index']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
+
+@app.route('/line')
+def line():
+ 
+    return render_template('line_chart.html', title='Bitcoin Monthly Price in USD')
 
 # 0 (login, signup, and logout routes)
 
@@ -200,28 +205,20 @@ def behavior():
     
     is_id = request.args.get('id')
     behavior_id = Behavior.query.filter_by(id=is_id).first()
-    
-    '''
-    behavior_occurrences = Behavior.query.get('occurrences')
-    '''
-
     trackers = Tracker.query.filter_by(behavior=behavior_id).all()
     behavior = Behavior.query.get(is_id)
+
+    # graph visualization
+    
+
     return render_template('/behavior.html', behavior=behavior, trackers=trackers)
 
-    '''
-    return redirect('/behavior?id=' + str(is_id))
-    '''
 @app.route('/increment-behavior', methods=['POST', 'GET'])
 def increment_behavior():
 
     is_id = request.args.get('id')
     tracker = Tracker.query.get(is_id)
 
-    '''
-    db.session.query(Behavior).update({Behavior.occurrences: Behavior.occurrences + 1})
-    db.session.commit()
-    '''
     if is_id:
         tracker = Tracker.query.get(is_id)
         db.session.query(Tracker).filter(Tracker.id==is_id).update({Tracker.occurrences: Tracker.occurrences + 1})
@@ -230,7 +227,6 @@ def increment_behavior():
 
     else:
         return render_template('/trackerpage.html', tracker=tracker)
-# 5 new-behavior ()
 
 @app.route('/new-behavior', methods=['POST', 'GET'])
 def new_behavior():
@@ -258,7 +254,6 @@ def new_behavior():
         return render_template('/newbehavior.html',title="Add a New Behavior", behavior_error=behavior_error, behavior=behavior)
     else:
         return render_template('/newbehavior.html')
-
 
 @app.route('/client', methods=['POST', 'GET'])
 def client():
