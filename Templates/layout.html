@@ -1,4 +1,4 @@
-{% from "macros.html" import nav_link with context %}
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -37,7 +37,21 @@
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
-
+    
+    <div class="container">
+      {% block heading %}
+        <h1>{% block page %}{% endblock %} Baseline</h1>
+      {% endblock %}
+      <h2>Applied Behavioral Analysis is the use of basic behavior principles to analyzed and solve practical problems.</h2>
+      
+      <h2>Baseline: The base rate of behavior, before intervention, against which the efficacy of experimental manipulations is compared.</h2>
+      {% block content %}{% endblock %}
+      
+    
+      <div>
+            <a href='/myclients?user={{user.username}}'><h2>My Clients</h2></a>
+      </div>
+      
       <div class="footer">
         {% block footer %}
           Created by Ryan Ratajczyk
