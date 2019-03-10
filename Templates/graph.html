@@ -1,47 +1,9 @@
-{% extends 'base.html' %}
-import jinjaToJS from 'jinja-to-js';
-    
-{% block content %}
-     
-    <div class="container">
-    <h1>{{behavior.description}}</h1>
-    </div>
+{% extends 'base.html' %}  
+{% block content %} 
 
-    <hr>
+<html>
 
-    <div class="container">
-        <a href='/new-aba-session?id={{behavior.id}}'><h2>New ABA Session</h2></a>
-    </div>
-
-    <hr>
-
-    <div class="container">
-      {% if trackers|length == 0 %}
-          <p>No ABA Sessions yet</p>
-      {% else %}
-    </div>
-
-        {% for tracker in trackers %}
-        <div class="container">
-                <form>
-                <a href='./tracker?id={{tracker.id}}'>{{tracker.datetime}}</a>
-                <input type="hidden" name="tracker-id" value="{{tracker.id}}" />
-                </form>
-            </h2>
-        </div>
-        {% endfor %}
-
-    {% endif %}
-
-    <hr>
-    
-    <div class="container">
-
-
-    </div>
-
-
-    <!-- Font Awesome -->
+<!-- Font Awesome -->
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
 <!-- Bootstrap core CSS -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet">
@@ -55,45 +17,20 @@ import jinjaToJS from 'jinja-to-js';
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/js/bootstrap.min.js"></script>
 <!-- MDB core JavaScript -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.3/js/mdb.min.js"></script>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-
 <div class="container">
-
 <canvas id="barChart" width="200" height="100" style="border:1px solid #000000;"></canvas>
-
-    {% for tracker in trackers %}
-    
-
-      <script>
+    <script>
         //bar
-        var date = [];
-          dateLength = date.lenght;
-            for(i = 0; i < dateLength; i++){
-              date[i];
-            }
-            /*
-        $.ajax({
-          type: "POST",
-          url: "~/main.py",
-          data: { param: text}
-        }).done(function( o ) {
-
-        });
-        */
         var ctxB = document.getElementById("barChart").getContext('2d');
-        
         var myBarChart = new Chart(ctxB, {
-          type: 'bar',
+          type: 'line',
           data: {
-            //labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-            
-            labels: ["{{ tracker.datetime }}"],
+            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange", "Teal", "Black"],
             datasets: [{
               label: 'Occurrences of Behavior',
-              //data: [12, 19, 0, 5, 2, 3],
-              data: ["{{ tracker.occurrences }}"],
+              data: [12, 19, 25, 5, 2, 3, 4, 5],
+              
+
               backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',
@@ -125,10 +62,6 @@ import jinjaToJS from 'jinja-to-js';
         });
       
       </script>
-    {% endfor %}
-  
       </div>
-<h1>{{occurrencez}}</h1>
-<hr>
-<h1>{{dates}}</h1>
-{% endblock %}
+</html>
+{% endblock %} 

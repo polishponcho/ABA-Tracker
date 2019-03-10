@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+<div class="container">
 <h1>Log in to ABA Data Keeper</h1>
 <p>If you don't have an account, you may <a href="/signup">Signup</a></p>
 <form action="/login" method="post">
@@ -25,4 +25,5 @@
     </table>
     <input type="submit" value="Login">
 </form>
+</div>
 {% endblock %}

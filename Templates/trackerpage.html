@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
     {% block content %}
+    <div class="container">
+
+    
 
     <h1>{{tracker.datetime}}</h1>
 
@@ -17,4 +20,122 @@
 
     <h2>{{tracker.occurrences}}</h2>
 
+    <a href=""><h1>End Session</h1></a>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
+<!-- Bootstrap core CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet">
+<!-- Material Design Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.3/css/mdb.min.css" rel="stylesheet">
+<!-- JQuery -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/js/bootstrap.min.js"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.3/js/mdb.min.js"></script>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+<div class="container">
+
+<canvas id="barChart" width="200" height="100" style="border:1px solid #000000;"></canvas>
+<!--
+<ul>
+{% for tracker in trackers %}
+  {% if tracker.datetime %}
+   <li> {{ tracker.datetime }} </li>
+  {% endif %}
+{% endfor %}
+</ul>
+-->
+
+  {% block container %}
+    <script>
+      
+        //bar
+        var date = [];
+          dateLength = date.lenght;
+            for(i = 0; i < dateLength; i++){
+              date[i];
+            }
+            /*
+        $.ajax({
+          type: "POST",
+          url: "~/main.py",
+          data: { param: text}
+        }).done(function( o ) {
+
+        });
+        */
+        var ctxB = document.getElementById("barChart").getContext('2d');
+        
+        var myBarChart = new Chart(ctxB, {
+          type: 'bar',
+          data: {
+            //labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+            /*labels: [{% for tracker in trackers %}
+                      "{{tracker}}",
+                      {% endfor %}], */
+            //labels: ["one", "two", "three"],
+            labels: ["{{ tracker.datetime }}"],
+            datasets: [{
+              label: 'Occurrences of Behavior',
+              //data: [12, 19, 0, 5, 2, 3],
+              data: ["{{ tracker.occurrences }}"],
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              yAxes: [{
+                ticks: {
+                  beginAtZero: true
+                }
+              }]
+            }
+          }
+        });
+      
+      </script>
+  {% endblock %}
+
+  <div class="container">
+        {% if trackers|length == 0 %}
+            <p>None</p>
+        {% else %}
+      </div>
+
+            {% for tracker in trackers %}
+                <div class="container">
+                        <form>
+                        <a href='./tracker?id={{tracker.id}}'>{{tracker.datetime}}</a>
+                        <input type="hidden" name="tracker-id" value="{{tracker.id}}" />
+                        </form>
+                   
+                </div>
+            {% endfor %}
+        {% endif %}
+
+
+    </div>
     {% endblock %}

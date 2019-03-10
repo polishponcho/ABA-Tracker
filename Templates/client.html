@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    
+<div class="container">
     <h1>{{title}}</h1>
-
+</div>
     <hr />
 
     {% if clients|length == 0 %}
@@ -13,15 +13,18 @@
 
 
         {% for client in clients %}
+        <div class="container">
             <h2>
                 <form>
                 <a href='./client?id={{client.id}}'>{{client.name}}</a>
                 <input type="hidden" name="client-id" value="{{client.id}}" />
                 </form>
             </h2>
-                
+        </div>
+        
+        <div class="container">
             <p>{{client.body}}</p>
-
+    </div>
             
             <p><em>written by </em> <a href='./client?user={{client.owner.username}}'>{{client.owner.username}}</a></p>
             

@@ -1,19 +1,29 @@
 {% extends 'base.html' %}
 
     {% block content %}
+    <h1>{{behavior.description}}</h1>
+    <div class="container">
+
+    <h1>{{behavior.description}}</h1>
 
     <h1>{{title}}</h1>
 
-    <hr>
-
+    </div>
+    <hr> 
+    <div class="container">
     <h2>{{behavior.description}}</h2>
+    </div>
+    <div class="container">
     <form action="increment-behavior?id={{behavior.id}}" method="POST">
     <button type="submit" value="occurrences" name="occurrences" onclick="">+</button>
     </form>
+    </div>
     <hr>
 
+    <div class="container">
     <h2>Number of times {{behavior.description}} has occurred:</h2>
-
+</div>
+<div class="container">
     <h2>{{behavior.occurrences}}</h2>
-
+</div>
     {% endblock %}

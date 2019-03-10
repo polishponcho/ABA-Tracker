@@ -1,11 +1,18 @@
 from flask import Flask, Markup, request, redirect, render_template, session
 from flask_sqlalchemy import SQLAlchemy 
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 from flask_bootstrap import Bootstrap
+from jinja2 import Template
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://ABA-Tracker:efficacy@localhost:8889/ABA-Tracker'
 app.config['SQLALCHEMY_ECHO'] = True
+engine = create_engine('sqlite:///:memory:', echo=True)
+Base = declarative_base
+Session = sessionmaker(bind=engine)
 db = SQLAlchemy(app)
 app.secret_key = 'supersecret'
 
@@ -55,12 +62,9 @@ def require_login():
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
-@app.route('/line')
-def line():
- 
-    return render_template('line_chart.html', title='Bitcoin Monthly Price in USD')
-
-# 0 (login, signup, and logout routes)
+@app.route('/graph')
+def chart():
+    return render_template('graph.html') 
 
 @app.route("/login", methods=['POST', 'GET'])
 def login():
@@ -170,6 +174,21 @@ def myclients():
     return render_template('/myclients.html', title= 'My Clients')
 
 # 3 new-client (nav bar, title, <input submit, value='Add Client'/>)
+@app.route('/client', methods=['POST', 'GET'])
+def client():
+
+    is_id = request.args.get('id')
+    behaviors = Behavior.query.all()
+    child = Client.query.filter_by(id=is_id).first()
+    
+    if is_id:
+        client = Client.query.get(is_id)
+        behaviors = Behavior.query.filter_by(child=child).all()
+        return render_template('/clientpage.html', client=client, behaviors=behaviors)
+
+    else:
+        clients = Client.query.all()
+        return render_template('/client.html', title="ABA Data Tracker", clients=clients)
 
 @app.route('/new-client', methods=['POST', 'GET'])
 def new_client():
@@ -187,9 +206,7 @@ def new_client():
             new_client = Client(client_name, owner)
             db.session.add(new_client)
             db.session.commit()
-            '''
-            /myclients?user={{user.username}}
-            '''
+            
             return redirect('/client?id=' + str(new_client.id))
 
         return render_template('/newclient.html',title="ABA Data Tracker", client_error=client_error)
@@ -207,17 +224,24 @@ def behavior():
     behavior_id = Behavior.query.filter_by(id=is_id).first()
     trackers = Tracker.query.filter_by(behavior=behavior_id).all()
     behavior = Behavior.query.get(is_id)
-
+    
+    occurrencez = db.session.query(Tracker.occurrences).filter_by(behavior=behavior_id).all()
+    
+    dates = db.session.query(Tracker.datetime).filter_by(behavior=behavior_id).all()
+        
     # graph visualization
     
+    '''for row in Tracker.query.get(id).all():
+        datetime = row'''
 
-    return render_template('/behavior.html', behavior=behavior, trackers=trackers)
+    return render_template('/behavior.html', behavior=behavior, trackers=trackers, dates=dates, tracker=tracker, occurrencez=occurrencez)
 
 @app.route('/increment-behavior', methods=['POST', 'GET'])
 def increment_behavior():
 
     is_id = request.args.get('id')
     tracker = Tracker.query.get(is_id)
+    
 
     if is_id:
         tracker = Tracker.query.get(is_id)
@@ -254,23 +278,7 @@ def new_behavior():
         return render_template('/newbehavior.html',title="Add a New Behavior", behavior_error=behavior_error, behavior=behavior)
     else:
         return render_template('/newbehavior.html')
-
-@app.route('/client', methods=['POST', 'GET'])
-def client():
-
-    is_id = request.args.get('id')
-    behaviors = Behavior.query.all()
-    child = Client.query.filter_by(id=is_id).first()
-    
-    if is_id:
-        client = Client.query.get(is_id)
-        behaviors = Behavior.query.filter_by(child=child).all()
-        return render_template('/clientpage.html', client=client, behaviors=behaviors)
-
-    else:
-        clients = Client.query.all()
-        return render_template('/client.html', title="ABA Data Tracker", clients=clients)
-        
+     
 @app.route('/tracker', methods=['POST', 'GET'])
 def tracker():
 
@@ -278,11 +286,15 @@ def tracker():
     trackers = Tracker.query.all()
     
     behavior = Behavior.query.filter_by(id=is_id).first()
+
     
+    trackers = Tracker.query.filter_by(behavior_id=behavior).all()
+
     if is_id:
         tracker = Tracker.query.get(is_id)
+        behavior = Behavior.query.filter_by(id=is_id).first()
         trackerz = Tracker.query.filter_by(behavior=behavior).all()
-        return render_template('/trackerpage.html', title='Track Behaviors Here!', tracker=tracker, behavior=behavior, trackerz=trackerz)
+        return render_template('/trackerpage.html', title=trackerz, tracker=tracker, behavior=behavior, trackerz=trackerz, trackers=trackers)
 
     return render_template('/tracker.html', title='Tracker Behaviors Here!', trackers=trackers, behavior=behavior)
 
