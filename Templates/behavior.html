@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 import jinjaToJS from 'jinja-to-js';
-    
+
 {% block content %}
      
     <div class="container">
@@ -62,38 +62,32 @@ import jinjaToJS from 'jinja-to-js';
 <div class="container">
 
 <canvas id="barChart" width="200" height="100" style="border:1px solid #000000;"></canvas>
-
-    {% for tracker in trackers %}
     
 
       <script>
         //bar
-        var date = [];
-          dateLength = date.lenght;
-            for(i = 0; i < dateLength; i++){
-              date[i];
-            }
-            /*
-        $.ajax({
-          type: "POST",
-          url: "~/main.py",
-          data: { param: text}
-        }).done(function( o ) {
+        
+      
+        //var datez = JSON.parse("{{ date }}");
 
-        });
-        */
         var ctxB = document.getElementById("barChart").getContext('2d');
         
         var myBarChart = new Chart(ctxB, {
           type: 'bar',
           data: {
             //labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+            labels: [{% for tracker in trackers %}
+                      "{{tracker.datetime}}",
+                    {% endfor %}],
+            //labels: ["{{ date }}"],
             
-            labels: ["{{ tracker.datetime }}"],
             datasets: [{
               label: 'Occurrences of Behavior',
               //data: [12, 19, 0, 5, 2, 3],
-              data: ["{{ tracker.occurrences }}"],
+              data: [{% for tracker in trackers %}
+                    "{{tracker.occurrences}}",
+                    {% endfor %}],
+
               backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',
@@ -125,10 +119,11 @@ import jinjaToJS from 'jinja-to-js';
         });
       
       </script>
-    {% endfor %}
+  
   
       </div>
-<h1>{{occurrencez}}</h1>
+<h1>{{occurrencey}}</h1>
 <hr>
-<h1>{{dates}}</h1>
+<h1>{{date}}</h1>
+
 {% endblock %}

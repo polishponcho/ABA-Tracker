@@ -5,6 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from flask_bootstrap import Bootstrap
 from jinja2 import Template
+from flask import json
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -225,16 +226,18 @@ def behavior():
     trackers = Tracker.query.filter_by(behavior=behavior_id).all()
     behavior = Behavior.query.get(is_id)
     
-    occurrencez = db.session.query(Tracker.occurrences).filter_by(behavior=behavior_id).all()
-    
-    dates = db.session.query(Tracker.datetime).filter_by(behavior=behavior_id).all()
-        
     # graph visualization
-    
-    '''for row in Tracker.query.get(id).all():
-        datetime = row'''
+    occurrencez = db.session.query(Tracker.occurrences).filter_by(behavior=behavior_id).all()
+    occurrencey = [row[0] for row in occurrencez]
+    occurrencey = json.dumps(occurrencey)
 
-    return render_template('/behavior.html', behavior=behavior, trackers=trackers, dates=dates, tracker=tracker, occurrencez=occurrencez)
+    dates = db.session.query(Tracker.datetime).filter_by(behavior=behavior_id).all()
+    date = [row[0] for row in dates]
+    date = json.dumps(date)
+
+    
+
+    return render_template('/behavior.html', behavior=behavior, trackers=trackers, dates=dates, tracker=tracker, occurrencez=occurrencez, date=date, occurrencey=occurrencey)
 
 @app.route('/increment-behavior', methods=['POST', 'GET'])
 def increment_behavior():
@@ -294,6 +297,7 @@ def tracker():
         tracker = Tracker.query.get(is_id)
         behavior = Behavior.query.filter_by(id=is_id).first()
         trackerz = Tracker.query.filter_by(behavior=behavior).all()
+    
         return render_template('/trackerpage.html', title=trackerz, tracker=tracker, behavior=behavior, trackerz=trackerz, trackers=trackers)
 
     return render_template('/tracker.html', title='Tracker Behaviors Here!', trackers=trackers, behavior=behavior)
