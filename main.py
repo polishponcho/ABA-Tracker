@@ -63,10 +63,6 @@ def require_login():
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
-@app.route('/graph')
-def chart():
-    return render_template('graph.html') 
-
 @app.route("/login", methods=['POST', 'GET'])
 def login():
     
@@ -234,8 +230,6 @@ def behavior():
     dates = db.session.query(Tracker.datetime).filter_by(behavior=behavior_id).all()
     date = [row[0] for row in dates]
     date = json.dumps(date)
-
-    
 
     return render_template('/behavior.html', behavior=behavior, trackers=trackers, dates=dates, tracker=tracker, occurrencez=occurrencez, date=date, occurrencey=occurrencey)
 
