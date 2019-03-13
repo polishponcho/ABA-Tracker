@@ -1,6 +1,6 @@
 {
   "name": "aba-tracker",
-  "version": "1.0.0",
+  "version": "10.13.0",
   "description": "Data Tracking app for ABA implementers ABA Data Tracker is a data tracking app developed for ABA implementers.",
   "main": "behavior.html.js",
   "dependencies": {
