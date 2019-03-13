@@ -5,41 +5,30 @@ import jinjaToJS from 'jinja-to-js';
      
     <div class="container">
     <h1>{{behavior.description}}</h1>
-    </div>
-
+    
     <hr>
 
-    <div class="container">
         <a href='/new-aba-session?id={{behavior.id}}'><h2>New ABA Session</h2></a>
-    </div>
-
+    
     <hr>
 
-    <div class="container">
       {% if trackers|length == 0 %}
           <p>No ABA Sessions yet</p>
       {% else %}
-    </div>
-
+    
+    <h2>Previous ABA Sessions:</h2>
+    
         {% for tracker in trackers %}
-        <div class="container">
                 <form>
-                <a href='./tracker?id={{tracker.id}}'>{{tracker.datetime}}</a>
+                <a href='./tracker?id={{tracker.id}}'><h2>{{tracker.datetime}}</h2></a>
                 <input type="hidden" name="tracker-id" value="{{tracker.id}}" />
                 </form>
             </h2>
-        </div>
         {% endfor %}
-
     {% endif %}
 
     <hr>
-    
-    <div class="container">
-
-
-    </div>
-
+          </div>
 
     <!-- Font Awesome -->
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
@@ -62,18 +51,14 @@ import jinjaToJS from 'jinja-to-js';
 <div class="container">
 
 <canvas id="barChart" width="200" height="100" style="border:1px solid #000000;"></canvas>
-    
-
+  
       <script>
         //bar
-        
-      
-        //var datez = JSON.parse("{{ date }}");
 
         var ctxB = document.getElementById("barChart").getContext('2d');
         
         var myBarChart = new Chart(ctxB, {
-          type: 'bar',
+          type: 'line',
           data: {
             //labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
             labels: [{% for tracker in trackers %}
@@ -122,8 +107,6 @@ import jinjaToJS from 'jinja-to-js';
   
   
       </div>
-<h1>{{occurrencey}}</h1>
-<hr>
-<h1>{{date}}</h1>
+
 
 {% endblock %}

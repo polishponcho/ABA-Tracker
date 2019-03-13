@@ -20,7 +20,7 @@
 
     <h2>{{tracker.occurrences}}</h2>
 
-    <a href=""><h1>End Session</h1></a>
+    <a href="./behavior?id={{tracker.behavior.id}}"><h1>End Session</h1></a>
 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
@@ -43,15 +43,7 @@
 <div class="container">
 
 <canvas id="barChart" width="200" height="100" style="border:1px solid #000000;"></canvas>
-<!--
-<ul>
-{% for tracker in trackers %}
-  {% if tracker.datetime %}
-   <li> {{ tracker.datetime }} </li>
-  {% endif %}
-{% endfor %}
-</ul>
--->
+
 
   {% block container %}
     <script>
@@ -119,22 +111,6 @@
       </script>
   {% endblock %}
 
-  <div class="container">
-        {% if trackers|length == 0 %}
-            <p>None</p>
-        {% else %}
-      </div>
-
-            {% for tracker in trackers %}
-                <div class="container">
-                        <form>
-                        <a href='./tracker?id={{tracker.id}}'>{{tracker.datetime}}</a>
-                        <input type="hidden" name="tracker-id" value="{{tracker.id}}" />
-                        </form>
-                   
-                </div>
-            {% endfor %}
-        {% endif %}
 
 
     </div>

@@ -1,37 +1,37 @@
 {% extends 'base.html' %}
 
     {% block content %}
-    
+    <div class="container">
         <h1>
-                <div class="container">
+            
             {{client.name}}
-            </div>
+            
         </h1>
 
         <hr>
 
-        <div class="container">
+        
             <a href='/new-behavior?id={{client.id}}'><h2>New Behavior</h2></a>
-        </div>
+        
     
         <hr>    
-        <div class="container">
+        
     {% if behaviors|length == 0 %}
         <p>No behaviors yet</p>
     {% else %}
-    </div>
+    
 
         {% for behavior in behaviors %}
-        <div class="container">
+        
             <h2>
                 <form>
                 <a href='./behavior?id={{behavior.id}}'>{{behavior.description}}</a>
                 <input type="hidden" name="behavior-id" value="{{behavior.id}}" />
                 </form>
             </h2>
-        </div>
+        
         {% endfor %}
 
     {% endif %}
-
+</div>
     {% endblock %}
